@@ -11,24 +11,16 @@ class Table():
     mktable.Table is a class of a table as expected
     Make an instance by : table = mktable.Table(["Row","1"])
     Made by : Hirad jahangirfard
-    Documentaition : ./README.MD
-    
-
-
-
-        
-
+    Documentaition : ./README.MD 
     """
     def __init__(self, header:list, *rows:list):
         '''The __init__ constructor of the table'''
-        self.rows = []
+        self.rows = [row for row in rows] #adds rows to self.rows
+        self.rows.insert(0, header)
         self.h_sep_char = '-'
         self.v_sep_char = '|'
         self.connection_point = '+'
-        self.rows.append(header)
-        for row in rows :
-            self.rows.append(row)
-   
+        self.empty = ''
     def add_row(self, *new_rows:list):
         
         for nr in new_rows:
@@ -36,31 +28,36 @@ class Table():
 
     def get_columns (self) -> list:
         columns = []
-        for i in range(len(self.rows[0])):
-            column = [row[i] for row in self.rows]
+        rows = self.fill_rows_gaps()
+        for i in range(len(rows[0])):
+            column = [row[i] for row in rows]
             columns.append(column)
         return columns
     
     def remove_row(self, *index):
-        for i in len(self.rows):
+        for i in range(len(self.rows)):
             self.rows.pop(index[i])
     
-    def render(self):
+    def move_row(self, old_index, new_index):
+        self.rows.insert(new_index, self.rows.pop(old_index))
+    
+    def render(self) -> list:
         """
         Renders out the table and returns it in a list.
         To get the printable string do this: str(my_table)
         This upper function casts the table list to str which I added this ability by __str__(self) function and returns it
         To print this: print(m) # No need to cast it to string with str(my_table) when printing it.
         """
-        rows = self.rows
+        rows = self.fill_rows_gaps()
         h_sep_char = self.h_sep_char
         v_sep_char = self.v_sep_char
         connection_point = self.connection_point
         
-        max_column_widths = self.get_max_column_widths()
+        column_widths = self.get_columns_widths()
+        max_column_widths =  [max(col_width) for col_width in column_widths]
         
-        def fill_rows_len_gaps(rows):
-            pass
+
+
         def format_row(row:list) -> list:
             """formats the row and returns it so that it's spacing and seperators are fixed"""
             formatted_row = []
@@ -93,29 +90,34 @@ class Table():
         n_rows = list(map(lambda row: row + "\n", rows))
         return "".join(n_rows)        
     
-    def get_max_column_widths(self) -> list:
+    def get_columns_widths(self) -> list:
         #for getting the printable(max) width of each column :
         max_column_widths = []
-        for column in self.get_columns():
+        columns = self.get_columns()
+        for column in columns:
             column_widths = []
-            for i in column:
+            for cell in column:
                 #gets the column widths (width of each row in column)
-                column_widths.append(len(i))
+                column_widths.append(len(cell))
             #gets the max width for this column
-            max_column_widths.append(max(column_widths))
+            max_column_widths.append(column_widths)
         # and this loop ^ gets all the columns max widths
         #why? we need max widths for spacing and the table being inline
         return max_column_widths
     
-    def get_row_lengths(self):
-        length = []
+    def get_rows_lengths(self):
         rows = self.rows
-        for i in range(len(rows)):
-            length.append(len(rows[i]))
-        return length
-        
-        
+        return [len(row) for row in rows]
     
-t = Table(["First Name","Last Name"], ["Hirad", "Jahangirfard"], ["qwen", "--"])
-t.add_row(["Behrad"])
+    def fill_rows_gaps(self) -> list:
+        rows = self.rows
+        rows_lengths = self.get_rows_lengths()
+        max_rows_len = max(rows_lengths)
+        for i in range(len(rows)):
+            diff = max_rows_len - rows_lengths[i]
+            rows[i] += [self.empty] * diff
+        return rows
+    
+t = Table(["First Name","Last Name"], ["Hirad", "Jahangirfard"])
+t.add_row(["Behrad", "Jahangirfard"], ["Taher", "Jahangirfard"], ["Masoomeh", "Fooladi"], ["Someone"])
 print(t)
