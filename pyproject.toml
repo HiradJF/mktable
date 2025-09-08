@@ -1,0 +1,17 @@
+[build-system]
+requires = ["flit_core>=3.9"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "mktable"
+version = "0.1.0"
+description = "A simple Python CLI table library with no extra dependencies."
+readme = "README.md"
+authors = [
+    { name = "Hirad Jahangirfard (@HiradJF)" }
+]
+requires-python = ">=3.8"
+license = "MIT"
+
+[project.urls]
+"Homepage" = "https://github.com/HiradJF/mktable"
