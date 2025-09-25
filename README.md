@@ -63,7 +63,7 @@
                 insert: inserts the dict from given index (0 if non given)
                 append: appends the dict to the end of the table
 
-    for exporting to a dict:
+for exporting to a dict:
         use this method:
         ```python
         my_table.export_dict() #returns a dict
