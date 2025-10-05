@@ -18,7 +18,7 @@ class Table:
     mktable.Table is the class of mktable table as expected
     Make an instance by : table = mktable.Table(["Row","1"])
     Made by : Hirad jahangirfard
-    Documentaition : ../../README.MD
+        Documentaition : ../../README.MD
     """
 
 
@@ -26,11 +26,14 @@ class Table:
         """
         The __init__ constructor of the table
         """
-        self._rows = list(self._stringify_rows(rows)) #turns the rows into list[]
+        
         self.h_sep_char = "-"
         self.v_sep_char = "|"
         self.connection_point = "+"
         self.empty = ""
+        
+        self._rows = list(self._stringify_rows(rows)) #turns the rows into list[]
+
     
     @property
     def rows(self):
@@ -67,7 +70,7 @@ class Table:
             # columns.append(column)
         # return columns
 
-    def remove_row(self, *index):
+    def remove_row(self, *index:int):
         """
         Removes the row with the given index(s) : *index
         """
@@ -81,15 +84,41 @@ class Table:
                 )
             self._rows.pop(i)
 
-    def move_row(self, old_index, new_index):
+    def move_row(self, old_index:int, new_index:int):
         """Moves the row in old_index to new_index"""
         try:
             self._rows.insert(new_index, self._rows.pop(old_index))
         except IndexError:
             raise IndexError(
-                "[Error] mktable: there is no row on old_index or new_index ,"
-                + f"therefore moving the row from index {old_index} to {new_index} was not possible (IndexError)"
-            )
+f"""
+[Error] mktable: there is no row on old_index or new_index ,\n"
+f"therefore moving the row from index {old_index} to
+{new_index} was not possible  
+(mktable.Table.move_row)
+""")
+        except TypeError:
+            if type(new_index) is not int:
+                raise TypeError(
+f"""
+[Error] mktable: the new_index argument's data type must be integer.
+current new_index type: {type(new_index)}    current old_index value: {new_index}
+(mktable.Table.move_rows)
+""")
+            elif type(old_index) is not int:
+                raise TypeError(
+f"""
+[Error] mktable: the old_index argument's data type must be integer.
+current type: {type(old_index)}     current value: {old_index}
+(mktable.Table.move_rows)
+""")
+            elif (type(new_index) is not int) and (type(old_index) is not int) :
+                raise TypeError(
+f"""
+[Error] mktable: both new_index and old_index argument's data type must be integer.
+current type: {type(old_index)}     current value: {old_index}
+current type: {type(new_index)}     current value: {new_index}
+(mktable.Table.move_rows)
+""")
 
     def render(self) -> iter:
         """
@@ -143,6 +172,14 @@ class Table:
         rows = self.render()
         n_rows = list(map(lambda row: row + "\n", rows))
         return "".join(n_rows)
+
+    def get_rows_tuple(self):
+        """
+        Same as get rows but it returns a tuple;
+        Returns all rows in tuple.
+        """
+        rows = self.get_rows()
+        return tuple(tuple(r) for r in rows)
 
     def get_columns_widths(self) -> list:
         """

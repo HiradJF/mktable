@@ -1,5 +1,5 @@
 import unittest
-from mktable.mktable import Table
+from mktable import Table
 
 # reigon random data for tests
 
@@ -31,14 +31,14 @@ mixed_data = (
         ["Phone", 499.49, False, ["electronics"]],
         ["Book", 12.5, True, ["education", "fun"]],
     ),
-    """+---------+--------+---------+-------------------------+
+"""+---------+--------+---------+-------------------------+
 | Product | Price  | InStock | Tags                    |
 +---------+--------+---------+-------------------------+
-| Laptop  | 999.99 | True    | ["electronics", "work"] |
-| Phone   | 499.49 | False   | ["electronics"]         |
-| Book    | 12.5   | True    | ["education", "fun"]    |
+| Laptop  | 999.99 | True    | ['electronics', 'work'] |
+| Phone   | 499.49 | False   | ['electronics']         |
+| Book    | 12.5   | True    | ['education', 'fun']    |
 +---------+--------+---------+-------------------------+
- """,
+"""
 )
 
 # Table with missing values
@@ -99,6 +99,18 @@ edge_case_data = [
 """,
 ]
 
+simple_dict_data = (
+    {
+        "name": ["Hirad", "Test"],
+        "email": ["example_email@gmail.com", "example@examplemail.com"],
+    },
+    (
+        ("name", "email"),
+        ("Hirad", "example_email@gmail.com"),
+        ("Test", "example@examplemail.com"),
+    ),
+)
+
 
 class TestTable(unittest.TestCase):
     def test_output(self):
@@ -125,7 +137,6 @@ class TestTable(unittest.TestCase):
 
         self.assertEqual(list(t.get_rows()), expected)
 
-
     def test_remove_rows(self):
         t = Table(*simple_data[0])
         t.remove_row(0, 2)
@@ -134,20 +145,38 @@ class TestTable(unittest.TestCase):
     def test_move_rows(self):
         t = Table(*simple_data[0])
 
-    def get_columns_test(self):
-        pass
+    def test_get_columns(self):
+        t = Table(*simple_data[0])
+        rows = t.fill_rows_gaps()
+        columns = []
+        for i in range(len(rows[0])):
+            column = [row[i] for row in rows]
+            columns.append(column)
 
-    def column_widths_test(self):
-        pass
+    def test_column_widths(self):
+        t = Table(*simple_data[0])
+        widths = t.get_columns_widths()
+        excepted_widths = [[2, 1, 1, 1], [4, 5, 3, 7], [3, 2, 2, 2]]
+        self.assertEqual(widths, excepted_widths)
 
-    def simple_gap_test(self):
-        pass
+    def test_simple_gap(self):
+        t = Table(*missing_data[0])
+        self.assertEqual(str(t), missing_data[1])
 
-    def mixed_data_test(self):
-        pass
+    def test_mixed_data(self):
+        t = Table(*mixed_data[0])
+        self.assertEqual(str(t), mixed_data[1])
 
-    def advanced_gap_test(self):
-        pass
+    def test_dict_import(self):
+        t = Table()
+        t.import_dict(simple_dict_data[0], method="append")
+        self.assertEqual(t.get_rows_tuple(), simple_dict_data[1])
+
+    def test_dict_export(self):
+        t = Table(*simple_dict_data[1])
+        exported_dict = t.export_dict()
+        self.assertEqual(exported_dict, simple_dict_data[0])
+
 
 
 if __name__ == "__main__":
