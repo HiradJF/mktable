@@ -22,12 +22,14 @@
     ```python
     render(self, h_sep_char = '-',v_sep_char ='|', connection_point = '+')
     ```
-    and btw it returns a list you can `str(your_table)` 
+    and btw it returns a list you can 
+    `str(your_table)` 
     to get the printable str
-    or if you want to print it just do `print(your_table)` 
+    or if you want to print it just do 
+    `print(your_table)` 
     it automaticaly casts it to str.
     
-        Argurments:
+    Argurments: 
         connection point : the point where separators connect.
             default: table.connection_point = "+"
         v_sep_char : vertical separator character
